@@ -1,0 +1,8 @@
+name: environmentalTest
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pandas
+  - pip:
+    - "--editable=git+https://github.com/sondale-git/SMHM.git"
