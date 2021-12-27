@@ -1,1 +1,3 @@
-$PYTHON python/setup.py install
+cd python/
+#$PYTHON setup.py install
+$PYTHON -m pip install .

@@ -6,10 +6,7 @@ package:
 
 source:
   git_url: https://github.com/sondale-git/SMHM.git
-
-build:
-  noarch: python
-  number: 0
+  git_rev: v0.1.0
 
 requirements:
   build:
@@ -18,9 +15,18 @@ requirements:
     - setuptools
   run:
     - python
+    - pandas
+    - requests
+    - numpy
+  host:
+    - python
+    - pip
+    - setuptools
   test:
     imports:
-    - 
+    - SMHM
+    - SMHM.HistoricalMunicipalMapper
+    - SMHM.HistoricalMunicipalMapper.MunicipalityMapper
 
 about:
   home: https://github.com/sondale-git/SMHM
