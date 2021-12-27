@@ -40,7 +40,7 @@ Go to directory:
 ```
 
 ```console
-[user@desktop src]$ pip install .
+[user@desktop python]$ pip install .
 ```
 
 ### Building and installing with conda :
