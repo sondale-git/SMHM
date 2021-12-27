@@ -13,7 +13,6 @@ setup(
     license="MIT",
     url='https://github.com/sondale-git/SMHM',
     packages=['SMHM'],  #same as name
-    package_dir={'':'src'}
-
+    package_dir={'':'src'},
     install_requires = ["pandas", "requests"], #external packages as dependencies
 )
