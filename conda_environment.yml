@@ -4,5 +4,6 @@ channels:
 dependencies:
   - python
   - pandas
+  - pip
   - pip:
     - "--editable=git+https://github.com/sondale-git/SMHM.git"
