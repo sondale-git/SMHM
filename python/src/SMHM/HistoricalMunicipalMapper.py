@@ -129,5 +129,5 @@ class MunicipalityMapper:
             table_df = pd.read_excel(finalrequest.url)
         if filepath is not None:
             with open(filepath, 'w') as f:
-                f.write(f.text)
+                f.write(finalrequest.text)
         return filepath, table_df, finalrequest.url
