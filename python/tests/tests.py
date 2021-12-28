@@ -16,3 +16,7 @@ print(url)
 print(table.loc[table["InitialName"]=='Brenles'])
 time.sleep(10)
 path, table, url = a.download_table(filepath = './test.csv', startPeriod_value = '2000',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
+
+time.sleep(12)
+path3,table_2003_2020_snapshots, url3 = a.download_table(table = 'Snapshots',startPeriod_value = '2003',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
+

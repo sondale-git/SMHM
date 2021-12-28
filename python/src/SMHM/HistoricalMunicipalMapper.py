@@ -103,23 +103,23 @@ class MunicipalityMapper:
         elif table == list_of_tables[1]:
             # Correspondances
             if self.escapeChars_value is not None:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.includeUnmodified_string : self.includeUnmodified_value, MunicipalityMapper.escapeChars_string: self.escapeChars_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.includeUnmodified_string : self.includeUnmodified_value, MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.escapeChars_string: self.escapeChars_value}
             else:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.includeUnmodified_string : self.includeUnmodified_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.includeUnmodified_string : self.includeUnmodified_value, MunicipalityMapper.format_string:self.format_value}
 
         elif table == list_of_tables[2]:
             # Geographic levels
             if self.escapeChars_value is not None:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.includeTerritoryExchange_string:self.includeTerritoryExchange_value, MunicipalityMapper.labelLanguages_string:self.labelLanguages_value, MunicipalityMapper.escapeChars_string: self.escapeChars_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.includeTerritoryExchange_string:self.includeTerritoryExchange_value, MunicipalityMapper.labelLanguages_string:self.labelLanguages_value, MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.escapeChars_string: self.escapeChars_value}
             else:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.includeTerritoryExchange_string:self.includeTerritoryExchange_value, MunicipalityMapper.labelLanguages_string:self.labelLanguages_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.includeTerritoryExchange_string:self.includeTerritoryExchange_value, MunicipalityMapper.labelLanguages_string:self.labelLanguages_value, MunicipalityMapper.format_string:self.format_value}
 
         elif table == list_of_tables[3]:
             # Snapshots
             if self.escapeChars_value is not None:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value,  MunicipalityMapper.escapeChars_string: self.escapeChars_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.escapeChars_string: self.escapeChars_value}
             else:
-                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value , MunicipalityMapper.format_string:self.format_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.includeTerritoryExchange_string:self.includeTerritoryExchange_value, MunicipalityMapper.labelLanguages_string:self.labelLanguages_value}
+                parameters = {MunicipalityMapper.startPeriod_string:self.startPeriod_value, MunicipalityMapper.endPeriod_string :self.endPeriod_value, MunicipalityMapper.useBfsCode_string:self.useBfsCode_value, MunicipalityMapper.format_string:self.format_value}
         print("requesting table {} with parameters : {}".format(table,parameters))
         finalrequest = requests.get(MunicipalityMapper.url+extension,  params = parameters)
         # Save to disk if not none
