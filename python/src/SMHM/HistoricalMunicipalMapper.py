@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 import pandas as pd
-
+import numpy as np
 def validate_startPeriod_endPeriod(start:str, end:str, str_format_start:str, str_format_end:str, str_format_out:str, verbose =True):
     # parameter validation
     try:
@@ -47,6 +47,29 @@ def validate_includeTerritoryExchange(includeTerritory):
 def validate_escapeChars(value):
     return value
 
+def TerminalCodeFrequencies(df, inplace=False):
+    if inplace == False:
+        df = df.copy()
+    else:
+        pass
+    df["TerminalCodeFrequencies"] = np.nan
+    for municipality_code in df.TerminalCode.unique():
+        df.loc[(df.TerminalCode==municipality_code), "TerminalCodeFrequencies"] = (df.TerminalCode==municipality_code).sum()
+    if inplace == False:
+        return df.TerminalCodeFrequencies
+    else:
+        pass
+def InitialCodeFrequencies(df, inplace=False):
+    if inplace==False:
+        df = df.copy()
+    else:
+        pass
+    for municipality_code in df.InitialCode.unique():
+        df.loc[(df.InitialCode==municipality_code), "InitialCodeFrequencies"] = (df.InitialCode==municipality_code).sum()
+    if inplace==False:
+        return df.InitialCodeFrequencies
+    else:
+        pass
 class MunicipalityMapper:
     url = "https://sms.bfs.admin.ch/WcfBFSSpecificService.svc/AnonymousRest/communes/"
     useBfsCode_string = 'useBfsCode'
@@ -75,9 +98,10 @@ class MunicipalityMapper:
         self.escapeChars_value = None
 
         self.str_out_format = str_out_format
-    def download_table(self, filepath = None, table:str = 'Mutations',**kwargs):
+    def download_table(self, filepath = None, add_flags=True, table:str = 'Mutations',**kwargs):
         list_of_tables = ['Mutations', 'Correspondances', 'Geographic levels','Snapshots']
-
+        if add_flags not in [True, False]:
+            raise ValueError("add_flags must be boolean value : True or False.")
         if table not in list_of_tables:
             raise ValueError("{} is not in choices : {}".format(table, list_of_tables))
         if table == 'Geographic levels':
@@ -127,7 +151,64 @@ class MunicipalityMapper:
             table_df  = pd.read_csv(finalrequest.url)
         if self.format_value =='Excel':
             table_df = pd.read_excel(finalrequest.url)
+        self.table_df = table_df
+        self.type_table = table
+        if add_flags==True:
+            self.add_flags()
+        else:
+            pass
+        # Saving to disk.
         if filepath is not None:
-            with open(filepath, 'w') as f:
-                f.write(finalrequest.text)
-        return filepath, table_df, finalrequest.url
+            self.table_df.to_csv(filepath, index = False)
+
+        return filepath, self.table_df, finalrequest.url
+    def add_flags(self):
+        try:
+            if self.type_table=='Correspondances':
+                self.table_df["TerminalCodeFrequencies"] = np.nan
+                self.table_df["InitialCodeFrequencies"] = np.nan
+                self.table_df.TerminalCodeFrequencies = TerminalCodeFrequencies(self.table_df)
+                self.table_df.InitialCodeFrequencies = InitialCodeFrequencies(self.table_df)
+
+                # Flagging if the municipalites merged in a non-existing municipality
+                self.table_df['flag_merged_in_new_municipality'] = np.nan
+                self.table_df['flag_merged_in_new_municipality'] = self.table_df['flag_merged_in_new_municipality'].astype(pd.Int64Dtype())
+                flag_merged_in_new_municipality_locator = (self.table_df.InitialCode!=self.table_df.TerminalCode) & (self.table_df.InitialName!=self.table_df.TerminalName) & (self.table_df.TerminalCodeFrequencies>1) & (self.table_df.InitialCodeFrequencies==1) & (~self.table_df.TerminalName.isin(self.table_df.InitialName))
+                self.table_df.loc[flag_merged_in_new_municipality_locator, "flag_merged_in_new_municipality"] = 1
+                self.table_df.loc[~flag_merged_in_new_municipality_locator, "flag_merged_in_new_municipality"] = 0
+                # [x] [done]
+
+                # Flagging if the municipalites merged in other existing municipality
+                self.table_df['flag_merged_in_existing_municipality'] = np.nan
+                self.table_df['flag_merged_in_existing_municipality'] = self.table_df['flag_merged_in_existing_municipality'].astype(pd.Int64Dtype())
+                flag_merged_in_existing_municipality_locator = (self.table_df.InitialCode!=self.table_df.TerminalCode) & (self.table_df.InitialName!=self.table_df.TerminalName) & (self.table_df.TerminalCodeFrequencies>1) & (self.table_df.InitialCodeFrequencies==1) & (self.table_df.TerminalName.isin(self.table_df.InitialName))
+                self.table_df.loc[flag_merged_in_existing_municipality_locator, "flag_merged_in_existing_municipality"] = 1
+                self.table_df.loc[~flag_merged_in_existing_municipality_locator, "flag_merged_in_existing_municipality"] = 0
+                # [x] [done]
+
+                # Flagging if the municipalities did not merge but changed code
+                self.table_df['flag_changed_code_not_municipality'] = np.nan
+                self.table_df['flag_changed_code_not_municipality'] = self.table_df['flag_merged_in_existing_municipality'].astype(pd.Int64Dtype())
+                flag_changed_code_not_municipality_locator = (self.table_df.InitialName==self.table_df.TerminalName) & (self.table_df.InitialCode!=self.table_df.TerminalCode) & (self.table_df.TerminalCodeFrequencies==1) & (self.table_df.InitialCodeFrequencies==1)
+                self.table_df.loc[flag_changed_code_not_municipality_locator,'flag_changed_code_not_municipality'] = 1
+                self.table_df.loc[~flag_changed_code_not_municipality_locator,'flag_changed_code_not_municipality'] = 0
+                # [x] [done]
+
+                # Flagging if the municipalities that merged in an existing municipality and it's the main municipality --> table_df.TerminalName==table_df.InitialName
+                self.table_df['flag_existing_merge_group_main'] = np.nan
+                self.table_df['flag_existing_merge_group_main'] = self.table_df['flag_existing_merge_group_main'].astype(pd.Int64Dtype())
+                flag_existing_merge_group_main_locator = (self.table_df.TerminalCodeFrequencies>1) & (self.table_df.InitialCodeFrequencies==1) & (self.table_df.InitialCode==self.table_df.TerminalCode)
+                self.table_df.loc[flag_existing_merge_group_main_locator,'flag_existing_merge_group_main'] = 1
+                self.table_df.loc[~flag_existing_merge_group_main_locator,'flag_existing_merge_group_main'] = 0
+                # [x] [done]
+
+                # Flagging if the municipality changed_name only
+                self.table_df['flag_changed_name_only'] = np.nan
+                self.table_df['flag_changed_name_only'] = self.table_df['flag_changed_name_only'].astype(pd.Int64Dtype())
+                flag_changed_name_only_locator = (self.table_df.TerminalCodeFrequencies==1) & (self.table_df.InitialCodeFrequencies==1) & (self.table_df.InitialName!=self.table_df.TerminalName)
+                self.table_df.loc[flag_changed_name_only_locator, "flag_changed_name_only"] = 1
+                self.table_df.loc[~flag_changed_name_only_locator, "flag_changed_name_only"] = 0
+                return self.table_df
+                # [x] [done]
+        except AttributeError as ae:
+            print(ae)
