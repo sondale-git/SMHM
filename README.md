@@ -2,8 +2,8 @@
 
 ## Swiss Municipalities Historical Mapper
 
-This project is mainly a wrapper around the federal statistical office "Liste historisée des communes
-" REST API.
+This project is mainly a wrapper around the federal statistical office "Liste historisée des communes"
+ REST API.
 
 Municipalities in Switzerland merge frequently, this package aims to download
 and create historical Municipalities mapping tables in an efficient way.
@@ -92,10 +92,63 @@ If this is not the issue run :
 >>> path, table, url = a.download_table(startPeriod_value = '2000',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
 ```
 
+By default `MunicipalityMapper.download_table(...)` has the parameter `add_flags` set to `True`. If the parameter `table='Correspondances'`, then 
+non-overlapping flags are created and columns `TerminalCodeFrequencies` and `InitialCodeFrequencies` are added. There meaning are summarized down below :
+
+|Column|Definition|
+|---|---|
+|InitialCodeFrequencies |Frequencies of values from `InitialCode` are reported with potential repeated reported frequencies|
+|TerminalCodeFrequencies|Frequencies of values from `TerminalCode` are reported with potential repeated reported frequencies|
+|flag_merged_in_new_municipality|Values set to `1` if the municipalities merged in a new municipality|
+|flag_merged_in_existing_municipality|Value set to `1` for municipalities who merged in and existing municipality not including the main municipality (the one who merged with itself)|
+|flag_existing_merge_group_main|Value set to `1` for municipalities who merged in an existing municipality and are the main municipalities|
+|flag_changed_code_not_municipality|Value set to `1` for municipalities who only changed code (no renaming, merge or split)|
+|flag_merged_in_existing_municipality_and_changed_code_main|Value set to `1` for municipalities who merged in existing municipality and the corresponding main municipality changed code|
+|flag_changed_name_only| Value set to `1` for municipalities who changed only their name|
+|flag_split_in_new_municipality| Value set to `1` for municipalities who were splitted in new municipalities|
+|flag_split_in_existing_municipality|Value set to `1` for municipalities who were splitted in existing municipalities|
+|flag_merge_and_split| Value set to `1` for municipalities who merged and splitted|
+|flag_no_change      | Value set to `1`for municipalities who didn't change.|
+
+This project being far from stable, it's recommended to check that the flags do not overlap although successful tests have already been driven.
+
+Here is an example:
+
+```python
+>>> path, table, url = a.download_table(startPeriod_value = '2000',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
+>>> flags = ["flag_merged_in_new_municipality","flag_merged_in_existing_municipality",
+             "flag_existing_merge_group_main", "flag_changed_code_not_municipality", 
+             "flag_merged_in_existing_municipality_and_changed_code_main", 
+             "flag_changed_name_only", "flag_split_in_new_municipality", 
+             "flag_split_in_existing_municipality", "flag_merge_and_split", "flag_no_change"]
+>>> table[flags].sum(axis=1) == table.shape[0]
+True
+```
+If value returned is `True` then there's no overlap.
+
+## Conda uninstalling:
+
+To uninstall:
+
+```console
+(SMHM) [user@desktop SMHM]$ conda remove smhm
+```
+
+If you want to clean the build directory (note that it will also remove other packages that you built in the environment):
+
+```console
+(SMHM) [user@desktop SMHM]$ conda build purge
+```
+
+```console
+(SMHM) [user@desktop SMHM]$ conda build purge-all
+```
+
+
 
 ## Contribute
 
-New functionalities contribution and language ports are more than welcome.
+New functionalities contribution, code review, language ports are more than welcome.
 
 ## Other information
 

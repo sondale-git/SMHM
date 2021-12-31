@@ -6,12 +6,14 @@ package:
 
 source:
   git_url: https://github.com/sondale-git/SMHM.git
-  git_rev: master 
-#  git_rev: v0.1.0 
+  git_rev: master
+#  git_rev: v0.1.0
 # line up would refer to tag v0.1.0, if master then if refers to branch master
 
 requirements:
-  build:
+  # build:
+  # seems that this section is for compiling code.
+  host:
     - python
     - pip
     - setuptools
@@ -20,10 +22,7 @@ requirements:
     - pandas
     - requests
     - numpy
-  host:
-    - python
-    - pip
-    - setuptools
+
   test:
     imports:
     - SMHM
@@ -35,4 +34,4 @@ about:
   license: MIT
   summary: 'Swiss Municipal Historical Mapper'
   dev_url: https://github.com/sondale-git/SMHM.git
-  doc_source_url: https://github.com/sondale-git/SMHM/blob/master/README.rst
+  doc_source_url: https://github.com/sondale-git/SMHM/blob/master/README.md
