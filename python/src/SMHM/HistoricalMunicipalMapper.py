@@ -112,7 +112,7 @@ class MunicipalityMapper:
             self.startPeriod_value, self.endPeriod_value = validate_startPeriod_endPeriod(start = kwargs.get('startPeriod_value',self.startPeriod_value), end = kwargs.get('endPeriod_value', self.endPeriod_value), str_format_start = kwargs.get('str_format_start', self.str_out_format), str_format_end = kwargs.get('str_format_end', self.str_out_format), str_format_out =  kwargs.get('str_out_format', self.str_out_format))
             self.labelLanguages_value = validate_labelLanguages(kwargs.get('labelLanguages_value', self.labelLanguages_value))
             self.useBfsCode_value = validate_BFSCode(kwargs.get('useBfsCode_value', self.useBfsCode_value))
-            self.includeUnmodified = validate_includeUnmodified(kwargs.get('includeUnmodified_value', self.includeUnmodified_value))
+            self.includeUnmodified_value = validate_includeUnmodified(kwargs.get('includeUnmodified_value', self.includeUnmodified_value))
             self.includeTerritoryExchange_value = validate_includeTerritoryExchange(kwargs.get('includeTerritoryExchange_value', self.includeTerritoryExchange_value))
             self.format_value  = validate_format(format = kwargs.get('format_value', self.format_value))
             self.escapeChars_value = validate_escapeChars(kwargs.get('escapeChars_value', self.escapeChars_value))

@@ -115,7 +115,7 @@ This project being far from stable, it's recommended to check that the flags do 
 Here is an example:
 
 ```python
->>> path, table, url = a.download_table(startPeriod_value = '2000',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
+>>> path, table, url = a.download_table(table='Correspondances',startPeriod_value = '2000',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y')
 >>> flags = ["flag_merged_in_new_municipality","flag_merged_in_existing_municipality",
              "flag_existing_merge_group_main", "flag_changed_code_not_municipality", 
              "flag_merged_in_existing_municipality_and_changed_code_main", 
@@ -124,6 +124,12 @@ Here is an example:
 >>> table[flags].sum(axis=1) == table.shape[0]
 True
 ```
+
+\***Note**: Correspondances table store all mutations that occured between `startPeriod` and `endPeriod`.
+Therefore when mapping values it's not necessary to call multiple time for different time frames.
+The best is to specify a bigger time frame in one single call, rather than multiple call, indeed 
+the REST API is not fast no matter the size of the queried data.
+
 If value returned is `True` then there's no overlap.
 
 ## Conda uninstalling:
