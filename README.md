@@ -125,12 +125,19 @@ Here is an example:
 True
 ```
 
-\***Note**: Correspondances table store all mutations that occured between `startPeriod` and `endPeriod`.
-Therefore when mapping values it's not necessary to call multiple time for different time frames.
+If value returned is `True` then there's no overlap.
+
+\***Note**: Correspondances table store all mutations that occured in the time period from year `startPeriod_value +1` to the end of this year and maps them with `endPeriod_value`.
+If you want to have the mutations that occured in `2011`, `startPeriod_value` has to be set to `2010`.
+Therefore when mapping values it's not necessary to call multiple time for the same year.
 The best is to specify a bigger time frame in one single call, rather than multiple call, indeed 
 the REST API is not fast no matter the size of the queried data.
 
-If value returned is `True` then there's no overlap.
+To double check that you specified the right period you can compare results visually with `table="Mutations"`:
+
+```python
+>>> path, table, url = a.download_table(table="Mutations", filepath = './mutations_test.csv', startPeriod_value = '2011',endPeriod_value = '2020', str_format_start = '%Y', str_format_end = '%Y') 
+```
 
 ## Conda uninstalling:
 
