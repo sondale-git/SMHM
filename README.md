@@ -165,7 +165,7 @@ New functionalities contribution, code review, language ports are more than welc
 
 ## Other information
 
-For R alternative [ValValetl/SMMT](https://github.com/ValValetl/SMMT) GitHub repository is maybe an option.
+For R alternative [ValValetl/SMMT](https://github.com/ValValetl/SMMT) GitHub repository may be an option.
 
 
 ## References :
