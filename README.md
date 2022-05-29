@@ -6,7 +6,7 @@ This project is mainly a wrapper around the federal statistical office "Liste hi
  REST API.
 
 Municipalities in Switzerland merge frequently, this package aims to download
-and create historical Municipalities mapping tables in an efficient way.
+and create historical Municipalities mapping tables in a simple way.
 
 ## Disclaimer
 
