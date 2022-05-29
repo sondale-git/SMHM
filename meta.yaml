@@ -1,4 +1,4 @@
-{% set version = "0.1.1" %}
+{% set version = "0.1.2" %}
 
 package:
   name: smhm
@@ -7,8 +7,8 @@ package:
 source:
   git_url: https://github.com/sondale-git/SMHM.git
 #  git_rev: master
-   git_rev: v0.1.1
-# line up would refer to tag v0.1.1, if master then if refers to branch master
+   git_rev: v0.1.2
+# line up would refer to tag v0.1.2, if master then if refers to branch master
 
 requirements:
   # build:
