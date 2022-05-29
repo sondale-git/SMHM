@@ -5,7 +5,7 @@ package:
   version: {{ version }}
 
 source:
-  git_url: https://github.com/sondale-git/SMHM.git
+  git_url: https://github.com/sondalex/SMHM.git
 #  git_rev: master
    git_rev: v0.1.2
 # line up would refer to tag v0.1.2, if master then if refers to branch master
@@ -30,8 +30,8 @@ requirements:
     - SMHM.HistoricalMunicipalMapper.MunicipalityMapper
 
 about:
-  home: https://github.com/sondale-git/SMHM
+  home: https://github.com/sondalex/SMHM
   license: MIT
   summary: 'Swiss Municipal Historical Mapper'
-  dev_url: https://github.com/sondale-git/SMHM.git
-  doc_source_url: https://github.com/sondale-git/SMHM/blob/master/README.md
+  dev_url: https://github.com/sondalex/SMHM.git
+  doc_source_url: https://github.com/sondalex/SMHM/blob/master/README.md
