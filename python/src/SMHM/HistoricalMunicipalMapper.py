@@ -4,75 +4,20 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 
+from typing import Union
 
-def validate_startPeriod_endPeriod(
-    start: str,
-    end: str,
-    str_format_start: str,
-    str_format_end: str,
-    str_format_out: str,
-    verbose=True,
-):
-    # parameter validation
-    try:
-
-        start = datetime.strptime(start, str_format_start)
-        end = datetime.strptime(end, str_format_end)
-
-        start = start.strftime(str_format_out)
-        end = end.strftime(str_format_out)
-        return start, end
-    except Exception as e:
-        print(e)
-    # https://docs.python.org/3/tutorial/errors.html --> finally executes before try
-    finally:
-        pass
+from SMHM.utils.validation import (
+    validate_startPeriod_endPeriod,
+    validate_format,
+    validate_labelLanguages,
+    validate_BFSCode,
+    validate_includeUnmodified,
+    validate_includeTerritoryExchange,
+    validate_escapeChars,
+)
 
 
-def validate_format(format):
-    if format not in ["Excel", "csv"]:
-        raise ValueError('format has to either be "Excel" or "csv"')
-    else:
-        return format
-
-
-def validate_labelLanguages(language):
-    if language not in ["fr", "en", "it", "de"]:
-        raise ValueError("language has to either be 'fr', 'en','it', 'de'")
-    else:
-        return language
-
-
-def validate_BFSCode(bfs_value):
-    if bfs_value not in ["true", "false"]:
-        raise ValueError("bfs_value has to be either set to 'true' or 'false'")
-    else:
-        return bfs_value
-
-
-def validate_includeUnmodified(includeUnmodified):
-    if includeUnmodified not in ["true", "false"]:
-        raise ValueError(
-            'includeUnmodified_value has to be either set to "true" or "false"'
-        )
-    else:
-        return includeUnmodified
-
-
-def validate_includeTerritoryExchange(includeTerritory):
-    if includeTerritory not in ["true", "false"]:
-        raise ValueError(
-            'includeTerritoryExchange_value has to be either set to "true" or "false"'
-        )
-    else:
-        return includeTerritory
-
-
-def validate_escapeChars(value):
-    return value
-
-
-def TerminalCodeFrequencies(df, inplace=False):
+def TerminalCodeFrequencies(df, inplace=False) -> pd.DataFrame:
     if inplace == False:
         df = df.copy()
     else:
@@ -85,10 +30,10 @@ def TerminalCodeFrequencies(df, inplace=False):
     if inplace == False:
         return df.TerminalCodeFrequencies
     else:
-        pass
+        return pd.DataFrame()
 
 
-def InitialCodeFrequencies(df, inplace=False):
+def InitialCodeFrequencies(df, inplace=False) -> pd.DataFrame:
     if inplace == False:
         df = df.copy()
     else:
@@ -100,7 +45,7 @@ def InitialCodeFrequencies(df, inplace=False):
     if inplace == False:
         return df.InitialCodeFrequencies
     else:
-        pass
+        return pd.DataFrame()
 
 
 class MunicipalityMapper:
@@ -139,9 +84,23 @@ class MunicipalityMapper:
         self.escapeChars_value = None
 
         self.str_out_format = str_out_format
+        self.str_format_start = None
+        self.str_format_end = None
+
+        self.table_df = None
+
+        self.table = None
 
     def download_table(
-        self, filepath=None, add_flags=True, table: str = "Mutations", **kwargs
+        self,
+        filepath=None,
+        add_flags=True,
+        table: str = "Mutations",
+        startPeriod_value: Union[str, None] = None,
+        endPeriod_value: Union[str, None] = None,
+        str_format_start: Union[str, None] = None,
+        str_format_end: Union[str, None] = None,
+        **kwargs,
     ):
         list_of_tables = [
             "Mutations",
@@ -152,48 +111,59 @@ class MunicipalityMapper:
         if add_flags not in [True, False]:
             raise ValueError("add_flags must be boolean value : True or False.")
         if table not in list_of_tables:
-            raise ValueError("{} is not in choices : {}".format(table, list_of_tables))
+            raise ValueError(f"{table} is not in choices : {list_of_tables}")
         if table == "Geographic levels":
             extension = "levels"
         else:
             extension = table.lower()
 
-        def validatekwargs():
-            (
-                self.startPeriod_value,
-                self.endPeriod_value,
-            ) = validate_startPeriod_endPeriod(
-                start=kwargs.get("startPeriod_value", self.startPeriod_value),
-                end=kwargs.get("endPeriod_value", self.endPeriod_value),
-                str_format_start=kwargs.get("str_format_start", self.str_out_format),
-                str_format_end=kwargs.get("str_format_end", self.str_out_format),
-                str_format_out=kwargs.get("str_out_format", self.str_out_format),
-            )
-            self.labelLanguages_value = validate_labelLanguages(
-                kwargs.get("labelLanguages_value", self.labelLanguages_value)
-            )
-            self.useBfsCode_value = validate_BFSCode(
-                kwargs.get("useBfsCode_value", self.useBfsCode_value)
-            )
-            self.includeUnmodified_value = validate_includeUnmodified(
-                kwargs.get("includeUnmodified_value", self.includeUnmodified_value)
-            )
-            self.includeTerritoryExchange_value = validate_includeTerritoryExchange(
-                kwargs.get(
-                    "includeTerritoryExchange_value",
-                    self.includeTerritoryExchange_value,
-                )
-            )
-            self.format_value = validate_format(
-                format=kwargs.get("format_value", self.format_value)
-            )
-            self.escapeChars_value = validate_escapeChars(
-                kwargs.get("escapeChars_value", self.escapeChars_value)
-            )
+        if startPeriod_value is not None:
+            self.startPeriod_value = startPeriod_value
+        if endPeriod_value is not None:
+            self.endPeriod_value = endPeriod_value
+        if str_format_start is not None:
+            self.str_format_start = str_format_start
+        else:
+            self.str_format_start = self.str_out_format
+        if str_format_end is not None:
+            self.str_format_end = str_format_end
+        else:
+            self.str_format_end = self.str_out_format
 
-        validatekwargs()
-        if table == list_of_tables[0]:
+        self.startPeriod_value, self.endPeriod_value = validate_startPeriod_endPeriod(
+            start=self.startPeriod_value,
+            end=self.endPeriod_value,
+            str_format_start=self.str_format_start,
+            str_format_end=self.str_format_end,
+            str_format_out=self.str_out_format,
+        )
+
+        self.labelLanguages_value = validate_labelLanguages(
+            kwargs.get("labelLanguages_value", self.labelLanguages_value)
+        )
+        self.useBfsCode_value = validate_BFSCode(
+            kwargs.get("useBfsCode_value", self.useBfsCode_value)
+        )
+        self.includeUnmodified_value = validate_includeUnmodified(
+            kwargs.get("includeUnmodified_value", self.includeUnmodified_value)
+        )
+        self.includeTerritoryExchange_value = validate_includeTerritoryExchange(
+            kwargs.get(
+                "includeTerritoryExchange_value",
+                self.includeTerritoryExchange_value,
+            )
+        )
+        self.format_value = validate_format(
+            format=kwargs.get("format_value", self.format_value)
+        )
+        self.escapeChars_value = validate_escapeChars(
+            kwargs.get("escapeChars_value", self.escapeChars_value)
+        )
+
+        parameters = None
+        if table == "Mutations":
             # Mutations
+
             if self.escapeChars_value is not None:
                 parameters = {
                     MunicipalityMapper.startPeriod_string: self.startPeriod_value,
@@ -208,7 +178,7 @@ class MunicipalityMapper:
                     MunicipalityMapper.format_string: self.format_value,
                 }
 
-        elif table == list_of_tables[1]:
+        elif table == "Correspondances":
             # Correspondances
             if self.escapeChars_value is not None:
                 parameters = {
@@ -226,7 +196,7 @@ class MunicipalityMapper:
                     MunicipalityMapper.format_string: self.format_value,
                 }
 
-        elif table == list_of_tables[2]:
+        elif table == "Geographic levels":
             # Geographic levels
             if self.escapeChars_value is not None:
                 parameters = {
@@ -248,7 +218,7 @@ class MunicipalityMapper:
                     MunicipalityMapper.format_string: self.format_value,
                 }
 
-        elif table == list_of_tables[3]:
+        elif table == "Snapshots":
             # Snapshots
             if self.escapeChars_value is not None:
                 parameters = {
@@ -272,9 +242,16 @@ class MunicipalityMapper:
         # Save to disk if not none
         if self.format_value == "csv":
             table_df = pd.read_csv(finalrequest.url)
-        if self.format_value == "Excel":
+        elif self.format_value == "Excel":
             table_df = pd.read_excel(finalrequest.url)
+        else:
+            # This condition never happens, since the format is validated above.
+            # Line use for avoiding pylint errors.
+            table_df = pd.DataFrame()
+        # closing connection
+        finalrequest.close()
         self.table_df = table_df
+        self.table = table
         self.type_table = table
         if add_flags == True:
             self.add_flags()
@@ -288,6 +265,10 @@ class MunicipalityMapper:
 
     def add_flags(self):
         try:
+            if self.table_df is None:
+                raise ValueError(
+                    "`self.table_df` is not in memory. Make sure to call self.download_table prior executing `self.add_flags`."
+                )
             if self.type_table == "Correspondances":
                 self.table_df["InitialCodeFrequencies"] = np.nan
                 self.table_df["TerminalCodeFrequencies"] = np.nan
@@ -508,5 +489,9 @@ class MunicipalityMapper:
                 self.table_df.loc[~flag_no_change_locator, "flag_no_change"] = 0
                 # [x] [done]
                 return self.table_df
+            else:
+                raise ValueError(
+                    '`self.add_flags(...)` works only with "Correspondances" tables'
+                )
         except AttributeError as ae:
             print(ae)

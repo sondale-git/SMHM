@@ -81,7 +81,11 @@ If this is not the issue run :
 ```
 
 
+## Testing :
 
+```bash
+(SMHM) [user@desktop SMHM]$ pytest python/ 
+```
 
 
 ## Using :
