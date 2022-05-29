@@ -24,7 +24,7 @@ which would be not compliant with FSO terms of use\*.
 First clone the repository:
 
 ```console
-[user@desktop ~]$ git clone https://github.com/sondale-git/SMHM.git
+[user@desktop ~]$ git clone https://github.com/sondalex/SMHM.git
 ```
 
 Go to directory:
