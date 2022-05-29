@@ -83,7 +83,7 @@ If this is not the issue run :
 
 ## Testing :
 
-```bash
+```console
 (SMHM) [user@desktop SMHM]$ pytest python/ 
 ```
 
